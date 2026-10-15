@@ -1,68 +1,57 @@
 # Bangalore Real Estate Price Prediction
 
 ## Project overview
-This project builds a supervised machine-learning workflow to estimate residential property prices in Bangalore using property attributes. The notebook includes data inspection, preprocessing, feature engineering, exploratory analysis, regression-model training, and saving the selected model and feature-column metadata.
 
-The dataset includes fields such as area type, availability, location, size, society, total square footage, number of bathrooms, number of balconies, and price.
+This project uses supervised regression to estimate Bangalore property listing prices from location, size, total square footage, and bathroom count. The notebook includes data cleaning, exploratory checks, model comparison, held-out evaluation, and model export.
 
-## Business problem
-Property prices vary with location and property characteristics. This project explores whether a regression model trained on historical property data can estimate a property's listed price from the available features.
+## Tools
 
-## Tools and libraries
-- **Python** — project implementation
-- **pandas and NumPy** — data preparation and numerical operations
-- **Matplotlib** — exploratory visualisation
-- **scikit-learn** — preprocessing, train/test splitting, and regression models
-- **pickle and JSON** — saving the trained model and feature-column information
+- Python
+- pandas and NumPy
+- Matplotlib
+- scikit-learn
+- joblib
+- Jupyter Notebook
 
-## Data preparation and feature engineering
-### Missing values and data inspection
-The notebook inspects the dataset and removes rows with missing values in the preparation stage.
-
-### Property size
-The `size` field contains room-count descriptions such as BHK or bedroom values. The notebook standardises this information into a numeric representation.
-
-### Total square footage
-The `total_sqft` field can contain numeric values and ranges. The notebook converts range values into numeric estimates so the field can be used as a model feature.
-
-### Outlier handling
-The notebook examines the distribution of property features and removes selected outlier records before training.
-
-### Location encoding
-Location is a categorical feature. The notebook uses one-hot/dummy encoding to represent location values numerically for the regression models.
-
-## Model development
-The notebook trains and compares the following regression algorithms:
-- Linear Regression
-- Lasso Regression
-- Decision Tree Regressor
-
-The data is split into training and test sets using an 80/20 split with `random_state=20`. The notebook selects Linear Regression as the preferred model and saves the trained model using pickle, alongside JSON metadata for the feature columns.
-
-## Model evaluation
-The notebook reports a test-set score of approximately **0.8444** from scikit-learn's `model.score(X_test, y_test)` for Linear Regression. For this regression estimator, the score represents the coefficient of determination, **R²**. It is not classification accuracy and should not be interpreted as a statement that 84.44% of predictions are correct.
-
-R² describes the proportion of target variation explained by the model on the evaluated test set, relative to a baseline that predicts the mean target value. Its value depends on the dataset, preprocessing, split, and evaluation procedure used.
+Install dependencies from `requirements.txt`.
 
 ## Repository contents
-- `Real Estate Price Prediction Project.ipynb` — notebook for data preparation, exploration, model training, evaluation, and model saving.
-- `banglore.csv` — dataset file included in the repository.
-- `README.md` — project documentation.
 
-## Running the project
-1. Clone or download the repository.
-2. Install the required libraries:
+- `Real Estate Price Prediction Project.ipynb` — end-to-end cleaning, modelling, evaluation, and export workflow.
+- `banglore.csv` — source dataset included in this repository.
+- `requirements.txt` — Python package dependencies.
+- `output/` — generated model, metrics, and metadata; created when the notebook runs.
 
-   ```bash
-   pip install pandas numpy matplotlib scikit-learn jupyter
-   ```
+## Workflow
 
-3. Open the notebook in Jupyter.
-4. Confirm that the CSV file path in the notebook points to `banglore.csv` or update it to the correct local path.
-5. Run the notebook cells in order.
+1. Load the source dataset using a project-relative path.
+2. Keep the model fields and parse bedroom/room counts, square footage, bathrooms, and prices into numeric formats.
+3. Convert square-footage ranges to their midpoint; non-numeric values with other units are treated as missing rather than incorrectly labelled as square feet.
+4. Inspect cleaned numeric distributions and listing counts by location.
+5. Split the data into training and test sets before fitting model preprocessing.
+6. Fit Linear Regression, Lasso, and Decision Tree regression pipelines with numeric scaling/imputation and one-hot encoding for location.
+7. Compare held-out R², MAE, and RMSE, inspect actual-vs-predicted values, and export the selected complete pipeline and metrics.
 
-## Scope and limitations
-The model's output is an estimate based on the patterns learned from the dataset; it is not a formal property valuation. The reported evaluation result applies to the notebook's particular train/test split and preprocessing workflow. The saved pickle model should only be loaded from a trusted source.
+## Evaluation notes
+
+- R² measures goodness of fit; it is not classification accuracy.
+- MAE and RMSE are reported in the same units as the source dataset's `price` column.
+- Preprocessing is fitted inside a pipeline using the training set, reducing leakage from data-driven preprocessing.
+- Unknown locations are handled by the encoder, but predictions for unseen locations may be less reliable.
+
+## How to run
+
+1. Clone or download this repository.
+2. Install dependencies with `python -m pip install -r requirements.txt`.
+3. Open `Real Estate Price Prediction Project.ipynb` in Jupyter and run cells from top to bottom.
+4. The notebook creates `output/` and saves the selected model pipeline, evaluation metrics, and metadata.
+
+## Limitations
+
+- This is a model trained on the included historical listing dataset; performance may not generalise to current market prices or other cities.
+- The source data may contain inconsistent measurement formats and unusual listings. Rows with required fields that cannot be parsed or have non-positive values are excluded.
+- The model is a portfolio demonstration and should not be treated as a professional property valuation.
 
 ## Author
+
 Henry Odionye
