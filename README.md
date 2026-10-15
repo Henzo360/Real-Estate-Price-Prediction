@@ -2,7 +2,7 @@
 
 ## Project overview
 
-This project uses supervised regression to estimate Bangalore property listing prices from location, size, total square footage, and bathroom count. The notebook includes data cleaning, exploratory checks, model comparison, held-out evaluation, and model export.
+This project uses supervised regression to estimate Bangalore property listing prices from location, size, total square footage, and bathroom count. The notebook includes data cleaning, exploratory checks, model comparison, cross-validation-based model selection, held-out evaluation, and model export.
 
 ## Tools
 
@@ -25,18 +25,19 @@ Install dependencies from `requirements.txt`.
 ## Workflow
 
 1. Load the source dataset using a project-relative path.
-2. Keep the model fields and parse bedroom/room counts, square footage, bathrooms, and prices into numeric formats.
-3. Convert square-footage ranges to their midpoint; non-numeric values with other units are treated as missing rather than incorrectly labelled as square feet.
+2. Parse bedroom/room counts, square footage, bathrooms, and prices into numeric formats.
+3. Convert square-footage ranges to their midpoint; values with other units are treated as missing rather than incorrectly labelled as square feet.
 4. Inspect cleaned numeric distributions and listing counts by location.
 5. Split the data into training and test sets before fitting model preprocessing.
-6. Fit Linear Regression, Lasso, and Decision Tree regression pipelines with numeric scaling/imputation and one-hot encoding for location.
-7. Compare held-out R², MAE, and RMSE, inspect actual-vs-predicted values, and export the selected complete pipeline and metrics.
+6. Compare Linear Regression, Lasso, and Decision Tree using five-fold cross-validation on training data.
+7. Select the model by mean cross-validation R², then evaluate it once on the held-out test set using R², MAE, and RMSE.
+8. Export the selected complete pipeline, cross-validation results, test metrics, and model metadata.
 
 ## Evaluation notes
 
 - R² measures goodness of fit; it is not classification accuracy.
 - MAE and RMSE are reported in the same units as the source dataset's `price` column.
-- Preprocessing is fitted inside a pipeline using the training set, reducing leakage from data-driven preprocessing.
+- Preprocessing is fitted inside the pipeline during cross-validation and final training, reducing leakage from data-driven preprocessing.
 - Unknown locations are handled by the encoder, but predictions for unseen locations may be less reliable.
 
 ## How to run
